@@ -31,6 +31,7 @@
 #endif
 
 #ifdef HX_LINUX
+#include "sys/sysinfo.h"
 #include "stdlib.h"
 #include "string.h"
 int parseLine(char *line)
@@ -45,10 +46,11 @@ int parseLine(char *line)
     return i;
 }
 #elif HX_MACOS
-#include "sysctl.h"
+#include <sys/sysctl.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <stdio.h>
 #endif
-
-
 
 size_t hxhardware::getSystemTotalVirtualMemory()
 {
@@ -150,7 +152,11 @@ size_t hxhardware::getProcessVirtualMemoryUsage()
         }
     }
     fclose(file);
-    return (size_t)(result / 1000);
+    if (result > processVirtualMemoryPeak)
+    {
+        processVirtualMemoryPeak = result;
+    }
+    return (size_t)(result);
 #elif HX_MACOS
     struct task_basic_info t_info;
     mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
@@ -196,7 +202,7 @@ size_t hxhardware::getSystemTotalPhysicalMemory()
     int64_t physical_memory;
     mib[0] = CTL_HW;
     mib[1] = HW_MEMSIZE;
-    length = sizeof(int64_t);
+    size_t length = sizeof(int64_t);
     sysctl(mib, 2, &physical_memory, &length, NULL, 0);
     return physical_memory;
 #else
@@ -234,7 +240,7 @@ size_t hxhardware::getSystemPhysicalMemoryUsage()
     int64_t physical_memory;
     mib[0] = CTL_HW;
     mib[1] = HW_MEMSIZE;
-    length = sizeof(int64_t);
+    size_t length = sizeof(int64_t);
     sysctl(mib, 2, &physical_memory, &length, NULL, 0);
     if (physical_memory > systemPhysicalMemoryPeak)
     {
