@@ -12,7 +12,8 @@
 
     <files id="hxprocessinfo">
         <compilerflag value="-I${hxprocessinfo_folder}" />
-        <file name="${hxprocessinfo_folder}/hxprocessinfo.cpp" />
+        <file name="${hxprocessinfo_folder}/memory.cpp" />
+        <file name="${hxprocessinfo_folder}/cpu.cpp" />
     </files>
 
 
