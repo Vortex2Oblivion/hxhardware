@@ -2,6 +2,6 @@
 -D analyzer-optimize
 -main Main
 --cpp bin
--L hxprocessinfo
+-L hxhardware
 -D NO_PRECOMPILED_HEADERS
--D HAXE_OUTPUT_FILE=HXProcessInfo
+-D HAXE_OUTPUT_FILE=hxhardware_test

@@ -1,24 +1,24 @@
 <xml>
     <pragma once="true" />
-    <set name="hxprocessinfo_folder" value="${haxelib:hxprocessinfo}/src" />
+    <set name="hxhardware_folder" value="${haxelib:hxhardware}/src" />
 
     <files id="haxe">
-        <compilerflag value="-I${hxprocessinfo_folder}" />
+        <compilerflag value="-I${hxhardware_folder}" />
     </files>
 
     <files id="__main__">
-        <compilerflag value="-I${hxprocessinfo_folder}" />
+        <compilerflag value="-I${hxhardware_folder}" />
     </files>
 
-    <files id="hxprocessinfo">
-        <compilerflag value="-I${hxprocessinfo_folder}" />
-        <file name="${hxprocessinfo_folder}/memory.cpp" />
-        <file name="${hxprocessinfo_folder}/cpu.cpp" />
+    <files id="hxhardware">
+        <compilerflag value="-I${hxhardware_folder}" />
+        <file name="${hxhardware_folder}/memory.cpp" />
+        <file name="${hxhardware_folder}/cpu.cpp" />
     </files>
 
 
     <target id="haxe">
-        <files id="hxprocessinfo" />
+        <files id="hxhardware" />
         <section if="windows">
             <lib name="pdh.lib" />
         </section>

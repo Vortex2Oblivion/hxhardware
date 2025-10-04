@@ -1,7 +1,7 @@
 import cpp.SizeT;
-import haxe.macro.Compiler;
-import hxprocessinfo.HXProcessInfo;
 import sys.thread.Thread;
+import hxhardware.CPU;
+import hxhardware.Memory;
 
 class Main {
 	static function roundDecimal(Value:Float, Precision:Int):Float {
@@ -23,7 +23,7 @@ class Main {
 	}
 
 	static function main() {
-		HXProcessInfo.init();
+		CPU.init();
 		var th:Thread = Thread.create(() -> {
 			while (true) {
 				var i:Int = 1223 * 1453;
@@ -33,26 +33,26 @@ class Main {
 		for (i in 0...1000) {
 			Sys.sleep(1);
 
-			var cpuUsageProcess:Float = HXProcessInfo.getProcessCPUUsage();
-			var cpuPeakProcess:Float = HXProcessInfo.getProcessPeakCPUUsage();
+			var cpuUsageProcess:Float = CPU.getProcessCPUUsage();
+			var cpuPeakProcess:Float = CPU.getProcessPeakCPUUsage();
 
-			var cpuUsageSystem:Float = HXProcessInfo.getSystemTotalCPUUsage();
-			var cpuPeakSystem:Float = HXProcessInfo.getSystemTotalPeakCPUUsage();
+			var cpuUsageSystem:Float = CPU.getSystemTotalCPUUsage();
+			var cpuPeakSystem:Float = CPU.getSystemTotalPeakCPUUsage();
 
-			var physicalMemoryUsage:cpp.SizeT = HXProcessInfo.getProcessPhysicalMemoryUsage();
-			var physicalMemoryPeak:cpp.SizeT = HXProcessInfo.getProcessPeakPhysicalMemoryUsage();
+			var physicalMemoryUsage:SizeT = Memory.getProcessPhysicalMemoryUsage();
+			var physicalMemoryPeak:SizeT = Memory.getProcessPeakPhysicalMemoryUsage();
 
-			var virtualMemoryUsage:cpp.SizeT = HXProcessInfo.getProcessVirtualMemoryUsage();
-			var virtualMemoryPeak:cpp.SizeT = HXProcessInfo.getProcessPeakVirtualMemoryUsage();
+			var virtualMemoryUsage:SizeT = Memory.getProcessVirtualMemoryUsage();
+			var virtualMemoryPeak:SizeT = Memory.getProcessPeakVirtualMemoryUsage();
 
-			var physicalMemoryUsageSystem:cpp.SizeT = HXProcessInfo.getSystemPhysicalMemoryUsage();
-			var physicalMemoryPeakSystem:cpp.SizeT = HXProcessInfo.getSystemPeakPhysicalMemoryUsage();
+			var physicalMemoryUsageSystem:SizeT = Memory.getSystemPhysicalMemoryUsage();
+			var physicalMemoryPeakSystem:SizeT = Memory.getSystemPeakPhysicalMemoryUsage();
 
-			var virtualMemoryUsageSystem:cpp.SizeT = HXProcessInfo.getSystemVirtualMemoryUsage();
-			var virtualMemoryPeakSystem:cpp.SizeT = HXProcessInfo.getSystemPeakVirtualMemoryUsage();
+			var virtualMemoryUsageSystem:SizeT = Memory.getSystemVirtualMemoryUsage();
+			var virtualMemoryPeakSystem:SizeT = Memory.getSystemPeakVirtualMemoryUsage();
 
-			var physicalMemoryAvaliable:cpp.SizeT = HXProcessInfo.getSystemTotalPhysicalMemory();
-			var virtualMemoryAvaliable:cpp.SizeT = HXProcessInfo.getSystemTotalVirtualMemory();
+			var physicalMemoryAvaliable:SizeT = Memory.getSystemTotalPhysicalMemory();
+			var virtualMemoryAvaliable:SizeT = Memory.getSystemTotalVirtualMemory();
 
 			if (Sys.systemName() == "Windows")
 				Sys.command("cls");

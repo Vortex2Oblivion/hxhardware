@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace hxprocessinfo
+namespace hxhardware
 {
 
     size_t getSystemTotalVirtualMemory();

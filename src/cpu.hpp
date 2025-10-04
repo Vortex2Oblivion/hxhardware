@@ -1,6 +1,6 @@
 #pragma once
 
-namespace hxprocessinfo
+namespace hxhardware
 {
     void init();
 

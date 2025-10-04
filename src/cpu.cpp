@@ -39,13 +39,13 @@ float CalculateCPULoad(unsigned long long idleTicks, unsigned long long totalTic
 }
 #endif
 
-void hxprocessinfo::init()
+void hxhardware::init()
 {
     initSystem();
     initProcess();
 }
 
-void hxprocessinfo::initSystem()
+void hxhardware::initSystem()
 {
 #ifdef HX_WINDOWS
     PdhOpenQuery(NULL, NULL, &cpuQuery);
@@ -60,7 +60,7 @@ void hxprocessinfo::initSystem()
 #endif
 }
 
-void hxprocessinfo::initProcess()
+void hxhardware::initProcess()
 {
 #ifdef HX_WINDOWS
     SYSTEM_INFO sysInfo;
@@ -96,7 +96,7 @@ void hxprocessinfo::initProcess()
 #endif
 }
 
-double hxprocessinfo::getSystemTotalCPUUsage()
+double hxhardware::getSystemTotalCPUUsage()
 {
 #ifdef HX_WINDOWS
     PDH_FMT_COUNTERVALUE counterVal;
@@ -167,12 +167,13 @@ double hxprocessinfo::getSystemTotalCPUUsage()
 #endif
 }
 
-double hxprocessinfo::getSystemTotalPeakCPUUsage()
+double hxhardware::getSystemTotalPeakCPUUsage()
 {
     return peakSystemCPU;
 }
 
-double hxprocessinfo::getProcessCPUUsage()
+// TODO: support mac
+double hxhardware::getProcessCPUUsage()
 {
 #ifdef HX_WINDOWS
     FILETIME ftime, fsys, fuser;
@@ -234,7 +235,7 @@ double hxprocessinfo::getProcessCPUUsage()
 #endif
 }
 
-double hxprocessinfo::getProcessPeakCPUUsage()
+double hxhardware::getProcessPeakCPUUsage()
 {
     return peakProcessCPU;
 }

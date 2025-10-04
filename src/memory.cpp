@@ -51,7 +51,7 @@ int parseLine(char *line)
 
 
 
-size_t hxprocessinfo::getSystemTotalVirtualMemory()
+size_t hxhardware::getSystemTotalVirtualMemory()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
@@ -79,7 +79,7 @@ size_t hxprocessinfo::getSystemTotalVirtualMemory()
 #endif
 }
 
-size_t hxprocessinfo::getSystemVirtualMemoryUsage()
+size_t hxhardware::getSystemVirtualMemoryUsage()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
@@ -121,12 +121,12 @@ size_t hxprocessinfo::getSystemVirtualMemoryUsage()
 #endif
 }
 
-size_t hxprocessinfo::getSystemPeakVirtualMemoryUsage()
+size_t hxhardware::getSystemPeakVirtualMemoryUsage()
 {
     return systemVirtualMemoryPeak;
 }
 
-size_t hxprocessinfo::getProcessVirtualMemoryUsage()
+size_t hxhardware::getProcessVirtualMemoryUsage()
 {
 #ifdef HX_WINDOWS
     PROCESS_MEMORY_COUNTERS_EX pmc;
@@ -172,12 +172,12 @@ size_t hxprocessinfo::getProcessVirtualMemoryUsage()
 #endif
 }
 
-size_t hxprocessinfo::getProcessPeakVirtualMemoryUsage()
+size_t hxhardware::getProcessPeakVirtualMemoryUsage()
 {
     return processVirtualMemoryPeak;
 }
 
-size_t hxprocessinfo::getSystemTotalPhysicalMemory()
+size_t hxhardware::getSystemTotalPhysicalMemory()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
@@ -205,7 +205,7 @@ size_t hxprocessinfo::getSystemTotalPhysicalMemory()
 #endif
 }
 
-size_t hxprocessinfo::getSystemPhysicalMemoryUsage()
+size_t hxhardware::getSystemPhysicalMemoryUsage()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
@@ -247,7 +247,7 @@ size_t hxprocessinfo::getSystemPhysicalMemoryUsage()
 #endif
 }
 
-size_t hxprocessinfo::getSystemPeakPhysicalMemoryUsage()
+size_t hxhardware::getSystemPeakPhysicalMemoryUsage()
 {
     return systemPhysicalMemoryPeak;
 }
@@ -257,7 +257,7 @@ size_t hxprocessinfo::getSystemPeakPhysicalMemoryUsage()
  * memory use) measured in bytes, or zero if the value cannot be
  * determined on this OS.
  */
-size_t hxprocessinfo::getProcessPeakPhysicalMemoryUsage()
+size_t hxhardware::getProcessPeakPhysicalMemoryUsage()
 {
 #if defined(_WIN32)
     /* Windows -------------------------------------------------- */
@@ -299,7 +299,7 @@ size_t hxprocessinfo::getProcessPeakPhysicalMemoryUsage()
  * Returns the current resident set size (physical memory use) measured
  * in bytes, or zero if the value cannot be determined on this OS.
  */
-size_t hxprocessinfo::getProcessPhysicalMemoryUsage()
+size_t hxhardware::getProcessPhysicalMemoryUsage()
 {
 #if defined(_WIN32)
     /* Windows -------------------------------------------------- */
