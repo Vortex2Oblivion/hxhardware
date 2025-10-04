@@ -2,9 +2,9 @@
   "name": "hxhardware",
   "url": "https://github.com/Vortex2Oblivion/hxhardware",
   "license": "MIT",
-  "tags": [],
-  "description": ".",
+  "tags": ["hardware", "memory", "cpu", "cpp", "native", "extern", "externs", "system", "util", "utilities", "debug", "debugger"],
+  "description": "Library to get detailed information about system hardware (only CPU and Memory information at the moment)",
   "version": "1.0.0",
-  "releasenote": "",
+  "releasenote": "Init",
   "contributors": ["Vortex"]
 }
