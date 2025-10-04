@@ -49,13 +49,15 @@ int parseLine(char *line)
 #include "sysctl.h"
 #endif
 
-uint64_t hxprocessinfo::getSystemTotalVirtualMemory()
+
+
+size_t hxprocessinfo::getSystemTotalVirtualMemory()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
     memInfo.dwLength = sizeof(MEMORYSTATUSEX);
     GlobalMemoryStatusEx(&memInfo);
-    return (uint64_t)memInfo.ullTotalPageFile;
+    return (size_t)memInfo.ullTotalPageFile;
 #elif HX_LINUX
     struct sysinfo memInfo;
 
@@ -69,7 +71,7 @@ uint64_t hxprocessinfo::getSystemTotalVirtualMemory()
     struct statfs stats;
     if (0 == statfs("/", &stats))
     {
-        return (uint64_t)stats.f_bsize * stats.f_bfree;
+        return (size_t)stats.f_bsize * stats.f_bfree;
     }
     return 0;
 #else
@@ -77,13 +79,18 @@ uint64_t hxprocessinfo::getSystemTotalVirtualMemory()
 #endif
 }
 
-uint64_t hxprocessinfo::getSystemVirtualMemoryUsage()
+size_t hxprocessinfo::getSystemVirtualMemoryUsage()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
     memInfo.dwLength = sizeof(MEMORYSTATUSEX);
     GlobalMemoryStatusEx(&memInfo);
-    return (uint64_t)(memInfo.ullTotalPageFile - memInfo.ullAvailPageFile);
+    size_t usage = (memInfo.ullTotalPageFile - memInfo.ullAvailPageFile);
+    if (usage > systemVirtualMemoryPeak)
+    {
+        systemVirtualMemoryPeak = usage;
+    }
+    return usage;
 #elif HX_LINUX
     struct sysinfo memInfo;
     sysinfo(&memInfo);
@@ -92,6 +99,10 @@ uint64_t hxprocessinfo::getSystemVirtualMemoryUsage()
     // Add other values in next statement to avoid int overflow on right hand side...
     virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
     virtualMemUsed *= memInfo.mem_unit;
+    if (virtualMemUsed > systemVirtualMemoryPeak)
+    {
+        systemVirtualMemoryPeak = virtualMemUsed;
+    }
     return virtualMemUsed;
 #elif HX_MACOS
     xsw_usage vmusage = {0};
@@ -100,18 +111,32 @@ uint64_t hxprocessinfo::getSystemVirtualMemoryUsage()
     {
         perror("unable to get swap usage by calling sysctlbyname(\"vm.swapusage\",...)");
     }
-    return (uint64_t)(size);
+    if (size > systemVirtualMemoryPeak)
+    {
+        systemVirtualMemoryPeak = size;
+    }
+    return (size_t)(size);
 #else
     return 0;
 #endif
 }
 
-uint64_t hxprocessinfo::getProcessVirtualMemoryUsage()
+size_t hxprocessinfo::getSystemPeakVirtualMemoryUsage()
+{
+    return systemVirtualMemoryPeak;
+}
+
+size_t hxprocessinfo::getProcessVirtualMemoryUsage()
 {
 #ifdef HX_WINDOWS
     PROCESS_MEMORY_COUNTERS_EX pmc;
     GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS *)&pmc, sizeof(pmc));
-    SIZE_T virtualMemUsedByMe = pmc.PrivateUsag
+    size_t usage = pmc.PrivateUsage;
+    if (usage > processVirtualMemoryPeak)
+    {
+        processVirtualMemoryPeak = usage;
+    }
+    return usage;
 #elif HX_LINUX
     FILE *file = fopen("/proc/self/status", "r");
     int result = -1;
@@ -126,7 +151,7 @@ uint64_t hxprocessinfo::getProcessVirtualMemoryUsage()
         }
     }
     fclose(file);
-    return (uint64_t)(result / 1000);
+    return (size_t)(result / 1000);
 #elif HX_MACOS
     struct task_basic_info t_info;
     mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
@@ -137,13 +162,22 @@ uint64_t hxprocessinfo::getProcessVirtualMemoryUsage()
     {
         return -1;
     }
-    return (int64_t)t_info.virtual_size;
+    if (t_info.virtual_size > processVirtualMemoryPeak)
+    {
+        processVirtualMemoryPeak = t_info.virtual_size;
+    }
+    return (size_t)t_info.virtual_size;
 #else
     return 0;
 #endif
 }
 
-uint64_t hxprocessinfo::getSystemTotalPhysicalMemory()
+size_t hxprocessinfo::getProcessPeakVirtualMemoryUsage()
+{
+    return processVirtualMemoryPeak;
+}
+
+size_t hxprocessinfo::getSystemTotalPhysicalMemory()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
@@ -171,13 +205,18 @@ uint64_t hxprocessinfo::getSystemTotalPhysicalMemory()
 #endif
 }
 
-uint64_t hxprocessinfo::getSystemPhysicalMemoryUsage()
+size_t hxprocessinfo::getSystemPhysicalMemoryUsage()
 {
 #ifdef HX_WINDOWS
     MEMORYSTATUSEX memInfo;
     memInfo.dwLength = sizeof(MEMORYSTATUSEX);
     GlobalMemoryStatusEx(&memInfo);
-    return = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
+    size_t usage = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
+    if (usage > systemPhysicalMemoryPeak)
+    {
+        systemPhysicalMemoryPeak = usage;
+    }
+    return usage;
 #elif HX_LINUX
     struct sysinfo memInfo;
 
@@ -186,6 +225,10 @@ uint64_t hxprocessinfo::getSystemPhysicalMemoryUsage()
     long long physMemUsed = memInfo.totalram - memInfo.freeram;
     // Multiply in next statement to avoid int overflow on right hand side...
     physMemUsed *= memInfo.mem_unit;
+    if (physMemUsed > systemPhysicalMemoryPeak)
+    {
+        systemPhysicalMemoryPeak = physMemUsed;
+    }
     return physMemUsed;
 #elif HX_MACOS
     int mib[2];
@@ -194,10 +237,19 @@ uint64_t hxprocessinfo::getSystemPhysicalMemoryUsage()
     mib[1] = HW_MEMSIZE;
     length = sizeof(int64_t);
     sysctl(mib, 2, &physical_memory, &length, NULL, 0);
+    if (physical_memory > systemPhysicalMemoryPeak)
+    {
+        systemPhysicalMemoryPeak = physical_memory;
+    }
     return physical_memory;
 #else
     return 0;
 #endif
+}
+
+size_t hxprocessinfo::getSystemPeakPhysicalMemoryUsage()
+{
+    return systemPhysicalMemoryPeak;
 }
 
 /**

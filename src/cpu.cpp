@@ -50,12 +50,12 @@ void hxprocessinfo::initSystem()
 #ifdef HX_WINDOWS
     PdhOpenQuery(NULL, NULL, &cpuQuery);
     // You can also use L"\\Processor(*)\\% Processor Time" and get individual CPU values with PdhGetFormattedCounterArray()
-    PdhAddEnglishCounter(cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &cpuTotal);
+    PdhAddEnglishCounter(cpuQuery, "\\Processor(_Total)\\% Processor Time", NULL, &cpuTotal);
     PdhCollectQueryData(cpuQuery);
 #elif HX_LINUX
     FILE *file = fopen("/proc/stat", "r");
     int _t = fscanf(file, "cpu %llu %llu %llu %llu", &lastTotalUser, &lastTotalUserLow,
-           &lastTotalSys, &lastTotalIdle);
+                    &lastTotalSys, &lastTotalIdle);
     fclose(file);
 #endif
 }
@@ -99,11 +99,14 @@ void hxprocessinfo::initProcess()
 double hxprocessinfo::getSystemTotalCPUUsage()
 {
 #ifdef HX_WINDOWS
-    PDH_FMT_COUN
-    TERVALUE counterVal;
+    PDH_FMT_COUNTERVALUE counterVal;
 
     PdhCollectQueryData(cpuQuery);
     PdhGetFormattedCounterValue(cpuTotal, PDH_FMT_DOUBLE, NULL, &counterVal);
+    if (counterVal.doubleValue > peakSystemCPU)
+    {
+        peakSystemCPU = counterVal.doubleValue;
+    }
     return counterVal.doubleValue;
 #elif HX_LINUX
     double percent;
@@ -112,7 +115,7 @@ double hxprocessinfo::getSystemTotalCPUUsage()
 
     file = fopen("/proc/stat", "r");
     int _t = fscanf(file, "cpu %llu %llu %llu %llu", &totalUser, &totalUserLow,
-           &totalSys, &totalIdle);
+                    &totalSys, &totalIdle);
     fclose(file);
 
     if (totalUser < lastTotalUser || totalUserLow < lastTotalUserLow ||
@@ -136,6 +139,11 @@ double hxprocessinfo::getSystemTotalCPUUsage()
     lastTotalSys = totalSys;
     lastTotalIdle = totalIdle;
 
+    if (percent > peakSystemCPU)
+    {
+        peakSystemCPU = percent;
+    }
+
     return percent;
 #elif HX_MACOS
     host_cpu_load_info_data_t cpuinfo;
@@ -145,13 +153,23 @@ double hxprocessinfo::getSystemTotalCPUUsage()
         unsigned long long totalTicks = 0;
         for (int i = 0; i < CPU_STATE_MAX; i++)
             totalTicks += cpuinfo.cpu_ticks[i];
-        return (double)CalculateCPULoad(cpuinfo.cpu_ticks[CPU_STATE_IDLE], totalTicks) * 100;
+        double percent = (double)CalculateCPULoad(cpuinfo.cpu_ticks[CPU_STATE_IDLE], totalTicks) * 100;
+        if (percent > peakSystemCPU)
+        {
+            peakSystemCPU = percent;
+        }
+        return percent;
     }
     else
         return -1.0;
 #else
     return 0;
 #endif
+}
+
+double hxprocessinfo::getSystemTotalPeakCPUUsage()
+{
+    return peakSystemCPU;
 }
 
 double hxprocessinfo::getProcessCPUUsage()
@@ -174,6 +192,11 @@ double hxprocessinfo::getProcessCPUUsage()
     lastCPU = now;
     lastUserCPU = user;
     lastSysCPU = sys;
+
+    if (percent * 100 > peakProcessCPU)
+    {
+        peakProcessCPU = percent * 100;
+    }
 
     return percent * 100;
 #elif HX_LINUX
@@ -200,8 +223,18 @@ double hxprocessinfo::getProcessCPUUsage()
     lastSysCPU = timeSample.tms_stime;
     lastUserCPU = timeSample.tms_utime;
 
+    if (percent > peakProcessCPU)
+    {
+        peakProcessCPU = percent;
+    }
+
     return percent;
 #else
     return 0;
 #endif
+}
+
+double hxprocessinfo::getProcessPeakCPUUsage()
+{
+    return peakProcessCPU;
 }

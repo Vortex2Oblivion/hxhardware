@@ -1,4 +1,4 @@
-import cpp.Int64;
+import cpp.SizeT;
 import haxe.macro.Compiler;
 import hxprocessinfo.HXProcessInfo;
 import sys.thread.Thread;
@@ -34,24 +34,34 @@ class Main {
 			Sys.sleep(1);
 
 			var cpuUsageProcess:Float = HXProcessInfo.getProcessCPUUsage();
+			var cpuPeakProcess:Float = HXProcessInfo.getProcessPeakCPUUsage();
+
 			var cpuUsageSystem:Float = HXProcessInfo.getSystemTotalCPUUsage();
+			var cpuPeakSystem:Float = HXProcessInfo.getSystemTotalPeakCPUUsage();
 
 			var physicalMemoryUsage:cpp.SizeT = HXProcessInfo.getProcessPhysicalMemoryUsage();
 			var physicalMemoryPeak:cpp.SizeT = HXProcessInfo.getProcessPeakPhysicalMemoryUsage();
 
-			var virtuallMemoryUsage:cpp.SizeT = HXProcessInfo.getProcessPhysicalMemoryUsage();
+			var virtualMemoryUsage:cpp.SizeT = HXProcessInfo.getProcessVirtualMemoryUsage();
+			var virtualMemoryPeak:cpp.SizeT = HXProcessInfo.getProcessPeakVirtualMemoryUsage();
 
 			var physicalMemoryUsageSystem:cpp.SizeT = HXProcessInfo.getSystemPhysicalMemoryUsage();
-			var virtuallMemoryUsageSystem:cpp.SizeT = HXProcessInfo.getSystemVirtualMemoryUsage();
+			var physicalMemoryPeakSystem:cpp.SizeT = HXProcessInfo.getSystemPeakPhysicalMemoryUsage();
+
+			var virtualMemoryUsageSystem:cpp.SizeT = HXProcessInfo.getSystemVirtualMemoryUsage();
+			var virtualMemoryPeakSystem:cpp.SizeT = HXProcessInfo.getSystemPeakVirtualMemoryUsage();
 
 			var physicalMemoryAvaliable:cpp.SizeT = HXProcessInfo.getSystemTotalPhysicalMemory();
 			var virtualMemoryAvaliable:cpp.SizeT = HXProcessInfo.getSystemTotalVirtualMemory();
 
-			Sys.command("clear");
+			if (Sys.systemName() == "Windows")
+				Sys.command("cls");
+			else
+				Sys.command("clear");
 			Sys.println("------------------------------------------PROCESS------------------------------------------");
-			Sys.println('CPU: ${roundDecimal(cpuUsageProcess, 2)}% | Physical Memory: ${formatBytes(physicalMemoryUsage)} | Virutal Memory: ${formatBytes(virtuallMemoryUsage)}');
+			Sys.println('CPU: ${roundDecimal(cpuUsageProcess, 2)}% / ${roundDecimal(cpuPeakProcess, 2)}% (peak) | Physical Memory: ${formatBytes(physicalMemoryUsage)} / ${formatBytes(physicalMemoryPeak)} (peak) | Virutal Memory: ${formatBytes(virtualMemoryUsage)} / ${formatBytes(virtualMemoryPeak)} (peak)');
 			Sys.println("------------------------------------------SYSTEM-------------------------------------------");
-			Sys.println('CPU: ${roundDecimal(cpuUsageSystem, 2)}% | Physical Memory: ${formatBytes(physicalMemoryUsageSystem)} | Virutal Memory: ${formatBytes(virtuallMemoryUsageSystem)}');
+			Sys.println('CPU: ${roundDecimal(cpuUsageSystem, 2)}% / ${roundDecimal(cpuPeakSystem, 2)}% (peak) | Physical Memory: ${formatBytes(physicalMemoryUsageSystem)} / ${formatBytes(physicalMemoryPeakSystem)} (peak) | Virutal Memory: ${formatBytes(virtualMemoryUsageSystem)} / ${formatBytes(virtualMemoryPeakSystem)} (peak)');
 			Sys.println("-----------------------------------------AVALIABLE------------------------------------------");
 			Sys.println('Physical Memory: ${formatBytes(physicalMemoryAvaliable)} | Virutal Memory: ${formatBytes(virtualMemoryAvaliable)}');
 		}
