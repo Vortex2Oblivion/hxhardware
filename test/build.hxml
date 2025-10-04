@@ -1,0 +1,7 @@
+-cp src
+-D analyzer-optimize
+-main Main
+--cpp bin
+-L hxprocessinfo
+-D NO_PRECOMPILED_HEADERS
+-D HAXE_OUTPUT_FILE=HXProcessInfo

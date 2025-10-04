@@ -1,0 +1,25 @@
+<xml>
+    <pragma once="true" />
+    <set name="hxprocessinfo_folder" value="${haxelib:hxprocessinfo}/src" />
+
+    <files id="haxe">
+        <compilerflag value="-I${hxprocessinfo_folder}" />
+    </files>
+
+    <files id="__main__">
+        <compilerflag value="-I${hxprocessinfo_folder}" />
+    </files>
+
+    <files id="hxprocessinfo">
+        <compilerflag value="-I${hxprocessinfo_folder}" />
+        <file name="${hxprocessinfo_folder}/hxprocessinfo.cpp" />
+    </files>
+
+
+    <target id="haxe">
+        <files id="hxprocessinfo" />
+        <section if="windows">
+            <lib name="pdh.lib" />
+        </section>
+    </target>
+</xml>
