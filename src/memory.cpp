@@ -28,7 +28,6 @@
 
 #if defined(HX_LINUX) || defined(HX_MACOS)
 #include "sys/types.h"
-#include "sys/sysinfo.h"
 #endif
 
 #ifdef HX_LINUX
