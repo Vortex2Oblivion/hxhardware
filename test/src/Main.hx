@@ -1,7 +1,6 @@
 import cpp.SizeT;
 import sys.thread.Thread;
-import hxhardware.CPU;
-import hxhardware.Memory;
+import hxhardware.*;
 
 class Main {
 	static function roundDecimal(Value:Float, Precision:Int):Float {
@@ -58,6 +57,10 @@ class Main {
 				Sys.command("cls");
 			else
 				Sys.command("clear");
+
+			Sys.println(GPU.getSystemTotalGPUUsage());
+			Sys.println(GPU.getSystemTotalPeakGPUUsage());
+
 			Sys.println("------------------------------------------PROCESS------------------------------------------");
 			Sys.println('CPU: ${roundDecimal(cpuUsageProcess, 2)}% / ${roundDecimal(cpuPeakProcess, 2)}% (peak) | Physical Memory: ${formatBytes(physicalMemoryUsage)} / ${formatBytes(physicalMemoryPeak)} (peak) | Virutal Memory: ${formatBytes(virtualMemoryUsage)} / ${formatBytes(virtualMemoryPeak)} (peak)');
 			Sys.println("------------------------------------------SYSTEM-------------------------------------------");
