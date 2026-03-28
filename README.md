@@ -2,6 +2,11 @@
 
 Haxe library to get hardware information on all platforms.
 
+Install:
+```sh
+haxelib git hxhardware https://github.com/Vortex2Oblivion/hxhardware
+```
+
 ## credits
 
 [most of the native c code](https://stackoverflow.com/questions/63166/how-to-determine-cpu-and-memory-consumption-from-inside-a-process)
